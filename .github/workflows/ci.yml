@@ -1,0 +1,29 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]          # roda quando algo entra na main
+  pull_request:
+    branches: [ main ]          # roda em todo PR aberto para a main
+
+jobs:
+  build-and-test:               # este nome é o "check" que você vai exigir na proteção da main
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Instalar .NET 10
+        uses: actions/setup-dotnet@v6
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Restaurar pacotes
+        run: dotnet restore
+
+      - name: Compilar
+        run: dotnet build --no-restore --configuration Release
+
+      - name: Testar
+        run: dotnet test --no-build --configuration Release --verbosity normal
